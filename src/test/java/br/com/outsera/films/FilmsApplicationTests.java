@@ -1,14 +1,11 @@
 package br.com.outsera.films;
 
 import br.com.outsera.films.model.MovieResponse;
-import br.com.outsera.films.service.MovieService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -20,14 +17,6 @@ class FilmsApplicationTests {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
-
-	@Autowired
-	private WebApplicationContext webApplicationContext;
-
-	@Autowired
-	private MovieService movieService;
-
-	private MockMvc mockMvc;
 
 	@Test
 	public void testGetProducersAwardIntervals() {
