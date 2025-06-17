@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: Golden Raspberry Awards API
+    version: 1.0.0
+  datasource:
+    url: jdbc:h2:mem:fims-outsera
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    open-in-view: true
+    properties:
+      hibernate:
+        format_sql: false
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: OFF
+    org.hibernate.type.descriptor.sql.BasicBinder: OFF
