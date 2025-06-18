@@ -43,9 +43,8 @@ public class MovieService {
 	    List<Movie> winners = movieRepository.findWinnersGroupedByProducer();
 	    Map<String, List<Integer>> producerWins = new HashMap<>();
 
-	    // Agrupar anos de vitória por produtor
 	    for (Movie row : winners) {
-	        for (String producer : row.getProducers().split(",\\s*")) { // Dividir produtores por vírgula
+	        for (String producer : row.getProducers().split(",\\s*")) {
 	            producerWins.computeIfAbsent(producer, k -> new ArrayList<>()).add(row.getReleaseYear());
 	        }
 	    }
