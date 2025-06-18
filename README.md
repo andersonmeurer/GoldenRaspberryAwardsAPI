@@ -13,8 +13,11 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina:
 ## Como executar o projeto
 
 1. **Obter o projeto**
-   2. [Clone o repositório](https://github.com/andersonmeurer/filmsOutsera.git) ou
-   2. [Faça o download do projeto](https://github.com/andersonmeurer/filmsOutsera/archive/refs/heads/main.zip)
+
+   1.1. [Clone o repositório](https://github.com/andersonmeurer/filmsOutsera.git)
+ ou
+
+   1.2. [Faça o download do projeto](https://github.com/andersonmeurer/filmsOutsera/archive/refs/heads/main.zip)
 
 
 2. **Execute o projeto**:
