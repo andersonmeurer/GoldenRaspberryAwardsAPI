@@ -40,55 +40,47 @@ public class MovieService {
 	}
 
 	public Map<String, List<MovieResponse>> getAwardIntervals() {
-	    List<Movie> winners = movieRepository.findWinnersGroupedByProducer();
-	    Map<String, List<Integer>> producerWins = new HashMap<>();
+		List<Movie> winners = movieRepository.findWinnersGroupedByProducer();
+		Map<String, List<Integer>> producerWins = new HashMap<>();
 
-	    for (Movie row : winners) {
-	        for (String producer : row.getProducers().split(",\\s*")) {
-	            producerWins.computeIfAbsent(producer, k -> new ArrayList<>()).add(row.getReleaseYear());
-	        }
-	    }
+		for (Movie row : winners) {
+			for (String producer : row.getProducers().split(",\\s*")) {
+				producerWins.computeIfAbsent(producer, k -> new ArrayList<>()).add(row.getReleaseYear());
+			}
+		}
 
-	    List<MovieInterval> minIntervals = new ArrayList<>();
-	    List<MovieInterval> maxIntervals = new ArrayList<>();
+		List<MovieInterval> minIntervals = new ArrayList<>();
+		List<MovieInterval> maxIntervals = new ArrayList<>();
 
-	    for (Map.Entry<String, List<Integer>> entry : producerWins.entrySet()) {
-	        List<Integer> years = entry.getValue();
-	        Collections.sort(years);
+		producerWins.forEach((producer, years) -> {
+			Collections.sort(years);
 
-	        for (int i = 1; i < years.size(); i++) {
-	            int interval = years.get(i) - years.get(i - 1);
-	            MovieInterval intervalData = new MovieInterval();
-	            intervalData.setProducers(entry.getKey());
-	            intervalData.setInterval(interval);
-	            intervalData.setPreviousWin(years.get(i - 1));
-	            intervalData.setFollowingWin(years.get(i));
+			for (int i = 1; i < years.size(); i++) {
+				int interval = years.get(i) - years.get(i - 1);
+				MovieInterval intervalData = new MovieInterval(producer, interval, years.get(i - 1), years.get(i));
 
-	            if (minIntervals.isEmpty() || interval < minIntervals.get(0).getInterval()) {
-	                minIntervals.clear();
-	                minIntervals.add(intervalData);
-	            } else if (interval == minIntervals.get(0).getInterval()) {
-	                minIntervals.add(intervalData);
-	            }
+				if (minIntervals.isEmpty() || interval < minIntervals.get(0).getInterval()) {
+					minIntervals.clear();
+					minIntervals.add(intervalData);
+				} else if (interval == minIntervals.get(0).getInterval()) {
+					minIntervals.add(intervalData);
+				}
 
-	            if (maxIntervals.isEmpty() || interval > maxIntervals.get(0).getInterval()) {
-	                maxIntervals.clear();
-	                maxIntervals.add(intervalData);
-	            } else if (interval == maxIntervals.get(0).getInterval()) {
-	                maxIntervals.add(intervalData);
-	            }
-	        }
-	    }
+				if (maxIntervals.isEmpty() || interval > maxIntervals.get(0).getInterval()) {
+					maxIntervals.clear();
+					maxIntervals.add(intervalData);
+				} else if (interval == maxIntervals.get(0).getInterval()) {
+					maxIntervals.add(intervalData);
+				}
+			}
+		});
 
-		List<MovieResponse> max = maxIntervals.stream()
-				.map(x ->
-						new MovieResponse(
-								x.getProducers(),
-								x.getInterval(),
-								x.getPreviousWin(),
-								x.getFollowingWin()
-						)
-				).toList();
+		return Map.of(
+				"min", convertToResponse(minIntervals),
+				"max", convertToResponse(maxIntervals));
+	}
+
+	private static List<MovieResponse> convertToResponse(List<MovieInterval> minIntervals) {
 		List<MovieResponse> min = minIntervals.stream()
 				.map(x ->
 						new MovieResponse(
@@ -98,7 +90,6 @@ public class MovieService {
 								x.getFollowingWin()
 						)
 				).toList();
-
-		return Map.of("min", min, "max", max);
+		return min;
 	}
 }

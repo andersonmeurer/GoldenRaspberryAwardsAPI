@@ -1,11 +1,12 @@
 package br.com.outsera.films.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class MovieInterval extends Movie {
+@AllArgsConstructor
+public class MovieInterval {
+    private String producers;
     private Integer interval;
     private Integer previousWin;
     private Integer followingWin;

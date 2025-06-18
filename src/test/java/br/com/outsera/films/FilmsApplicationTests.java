@@ -1,6 +1,8 @@
 package br.com.outsera.films;
 
 import br.com.outsera.films.model.MovieResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,11 +21,15 @@ class FilmsApplicationTests {
 	private TestRestTemplate restTemplate;
 
 	@Test
-	public void testGetProducersAwardIntervals() {
+	public void testGetProducersAwardIntervals() throws JsonProcessingException {
 		ResponseEntity<String> response = restTemplate.getForEntity("/producers/intervals", String.class);
 		assertThat(response.getStatusCodeValue()).isEqualTo(200);
 		assertThat(response.getBody()).contains("min", "max");
 		String jsonExpected = "{\"min\":[{\"producers\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producers\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		Map<String, Object> expectedMap = objectMapper.readValue(jsonExpected, Map.class);
+		Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), Map.class);
 		assertThat(response.getBody()).isEqualTo(jsonExpected);
 	}
 
