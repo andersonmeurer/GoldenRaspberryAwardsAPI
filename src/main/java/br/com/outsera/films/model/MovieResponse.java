@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 public class MovieResponse {
 
-	private String producers;
+	private String producer;
 
 	private Integer interval;
 

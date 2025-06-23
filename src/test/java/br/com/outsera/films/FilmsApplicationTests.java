@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,21 +21,25 @@ class FilmsApplicationTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
+	@Autowired
+	ObjectMapper objectMapper;
+
 	@Test
 	public void testGetProducersAwardIntervals() throws JsonProcessingException {
 		ResponseEntity<String> response = restTemplate.getForEntity("/producers/intervals", String.class);
 		assertThat(response.getStatusCodeValue()).isEqualTo(200);
 		assertThat(response.getBody()).contains("min", "max");
-		String jsonExpected = "{\"min\":[{\"producers\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producers\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
+		String jsonExpected = "{\"min\":[{\"producer\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producer\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, Object> expectedMap = objectMapper.readValue(jsonExpected, Map.class);
-		Map<String, Object> responseMap = objectMapper.readValue(response.getBody(), Map.class);
-		assertThat(response.getBody()).isEqualTo(jsonExpected);
+		Map<String, Object> expectedMap = new TreeMap<>(objectMapper.readValue(jsonExpected, Map.class));
+		Map<String, Object> responseMap = new TreeMap<>(objectMapper.readValue(response.getBody(), Map.class));
+
+		assertThat(responseMap).isEqualTo(expectedMap);
+		assertThat(objectMapper.readTree(response.getBody())).isEqualTo(objectMapper.readTree(jsonExpected));
 	}
 
 	@Test
-	public void testMovieResponse() {
+	public void testMovieResponse() throws JsonProcessingException {
 		MovieResponse minResponse = new MovieResponse("Joel Silver", 1, 1990, 1991);
 		MovieResponse maxResponse = new MovieResponse("Matthew Vaughn", 13, 2002, 2015);
 
@@ -46,16 +51,24 @@ class FilmsApplicationTests {
 		ResponseEntity<String> response = restTemplate.getForEntity("/producers/intervals", String.class);
 		assertThat(response.getStatusCodeValue()).isEqualTo(200);
 
-		String jsonExpected = "{\"min\":[{\"producers\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producers\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
-		assertThat(response.getBody()).isEqualTo(jsonExpected);
+		String jsonExpected = "{\"min\":[{\"producer\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producer\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
+
+		Map<String, Object> expectedMap = new TreeMap<>(objectMapper.readValue(jsonExpected, Map.class));
+		Map<String, Object> responseMap = new TreeMap<>(objectMapper.readValue(response.getBody(), Map.class));
+		assertThat(responseMap).isEqualTo(expectedMap);
+		assertThat(objectMapper.readTree(response.getBody())).isEqualTo(objectMapper.readTree(jsonExpected));
 	}
 
 	@Test
-	public void testGetProducersAwardIntervalsJson() {
+	public void testGetProducersAwardIntervalsJson() throws JsonProcessingException {
 		ResponseEntity<String> response = restTemplate.getForEntity("/producers/intervals", String.class);
 		assertThat(response.getStatusCodeValue()).isEqualTo(200);
 		assertThat(response.getBody()).contains("min", "max");
-		String jsonExpected = "{\"min\":[{\"producers\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producers\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
-		assertThat(response.getBody()).isEqualTo(jsonExpected);
+		String jsonExpected = "{\"min\":[{\"producer\":\"Joel Silver\",\"interval\":1,\"previousWin\":1990,\"followingWin\":1991}],\"max\":[{\"producer\":\"Matthew Vaughn\",\"interval\":13,\"previousWin\":2002,\"followingWin\":2015}]}";
+
+		Map<String, Object> expectedMap = new TreeMap<>(objectMapper.readValue(jsonExpected, Map.class));
+		Map<String, Object> responseMap = new TreeMap<>(objectMapper.readValue(response.getBody(), Map.class));
+		assertThat(responseMap).isEqualTo(expectedMap);
+		assertThat(objectMapper.readTree(response.getBody())).isEqualTo(objectMapper.readTree(jsonExpected));
 	}
 }
